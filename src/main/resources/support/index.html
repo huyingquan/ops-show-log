@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG日志</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div id="content" style="width: 300px;margin: 20px;"></div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+    var toSingle=function (o) {
+        var path=$(o).html();
+        window.location.href=getContextPath()+'/log/single.html?path='+path;
+    };
+    $(function () {
+        $.ajax({
+            type : 'post',
+            url : getContextPath()+'/log/init',
+            data : {},
+            dataType : 'json',
+            success : function(data) {
+                var contentDiv=$('#content');
+                var app='<ul class="list-group">';
+                for(var i=0;i<data.length;i++){
+                    app=app+'<a href="javascript:void(0);" onclick="toSingle(this)" class="list-group-item">'+data[i]+'</a>';
+                }
+                app=app+"</ul>";
+                contentDiv.append(app);
+            }
+        });
+    });
+</script>
+</body>
+</html>

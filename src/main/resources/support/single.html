@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOG日志</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .colorCss{transition:all 5s;color:whitesmoke;}
+    </style>
+</head>
+<body style="background-color: black;">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="background-color: #e7e7e7;">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="back_a" class="navbar-brand" href="javascript:void(0);">LOG</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <form id="form" class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="radio" name="ifroll" class="form-control" checked value="1">开启滚动
+                    <input type="radio" name="ifroll" class="form-control" value="0">关闭滚动|
+                    刷新周期:<select name="time" class="form-control">
+                        <option value="3000">3秒</option>
+                        <option value="5000">5秒</option>
+                        <option value="10000">10秒</option>
+                    </select>
+                </div>
+                <a id="timer" href="javascript:void(0);" class="btn btn-default">点击监控</a>
+                <div id="page" class="form-group"></div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="path" href="javascript:void(0);">Link</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+<div id="content" style="margin-top: 55px;margin-left: 10px;margin-right: 10px;margin-bottom: 10px;color: #006600;font-family: 华文宋体;"></div>
+<div style="position: fixed;top: 45%;right: 10px;">
+    <button onclick="goToWhere(0)" type="button" class="btn btn-default" style="opacity:0.5;">╱╲</button>
+    <br>
+    <button onclick="goToWhere(1)" type="button" class="btn btn-default" style="opacity:0.5;">╲╱</button>
+</div>
+
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        var path=null,xx,pageIndex=null,pageSize,fileSize;
+        var singleAjax=function (param) {
+            $.ajax({
+                type : 'post',
+                url : getContextPath()+'/log/single',
+                data : param,
+                dataType : 'json',
+                success : function(data) {
+                    var content=$('#content');
+                    for(var i=0;i<data.list.length;i++){
+                        content.append(data.list[i]+"<br>");
+                    }
+                    $('#path').html("文件:"+param.path+" 大小:"+data.si);
+                    pageSize=data.pageSize,pageIndex=data.pageIndex,fileSize=data.fileSize;
+                    var app="总页数:"+pageSize+"&nbsp;&nbsp;";
+                    app=app+'<a href="javascript:void(0);" onclick="changPage(1)">首页</a>&nbsp;';
+                    if(pageSize<=5){
+                        for(var i=1;i<=pageSize;i++){
+                            if(i==pageIndex){
+                                app=app+'<a href="javascript:void(0);">['+i+']</a>&nbsp;';
+                            }
+                            else{
+                                app=app+'<a href="javascript:void(0);" onclick="changPage('+i+')">'+i+'</a>&nbsp;';
+                            }
+                        }
+                    }
+                    else{
+                        if(pageIndex<=3){
+                            for(var i=1;i<=5;i++){
+                                if(i==pageIndex){
+                                    app=app+'<a href="javascript:void(0);">['+i+']</a>&nbsp;';
+                                }
+                                else{
+                                    app=app+'<a href="javascript:void(0);" onclick="changPage('+i+')">'+i+'</a>&nbsp;';
+                                }
+                            }
+                        }
+                        else if(pageSize-pageIndex>2){
+                            for(i=pageIndex-2;i<=pageIndex+2;i++){
+                                if(i==pageIndex){
+                                    app=app+'<a href="javascript:void(0);">['+i+']</a>&nbsp;';
+                                }
+                                else{
+                                    app=app+'<a href="javascript:void(0);" onclick="changPage('+i+')">'+i+'</a>&nbsp;';
+                                }
+                            }
+                        }
+                        else{
+                            for(var i=pageSize-4;i<=pageSize;i++){
+                                if(i==pageIndex){
+                                    app=app+'<a href="javascript:void(0);">['+i+']</a>&nbsp;';
+                                }
+                                else{
+                                    app=app+'<a href="javascript:void(0);" onclick="changPage('+i+')">'+i+'</a>&nbsp;';
+                                }
+                            }
+                        }
+                    }
+                    app=app+'<a href="javascript:void(0);" onclick="changPage('+pageSize+')">尾页</a>&nbsp;';
+                    $('#page').html(app);
+                    goToWhere(1);
+                }
+            });
+        };
+        var changPage=function (o) {
+            window.location.href=getContextPath()+'/log/single.html?path='+path+'&pageIndex='+o;
+        };
+        $(function () {
+            path=getUrlParam("path");
+            pageIndex=getQueryString("pageIndex");
+            if(path==null){
+                alert("error: path is null");
+            }
+            else{
+                var param={
+                    path:path
+                };
+                if(pageIndex!=null){
+                    param.pageIndex=pageIndex;
+                }
+                singleAjax(param);
+            }
+            $('#back_a').click(function () {
+                window.location.href=getContextPath()+"/log/index.html";
+            });
+            $('#timer').click(function () {
+                if($(this).html()=='点击监控'){
+                    if(pageIndex!=pageSize){
+                        alert("请跳转至尾页再监控");
+                        return;
+                    }
+                    var radio=$('#form input[name="ifroll"]:checked').val();
+                    var time=$('#form select[name="time"]').val();
+                    xx=window.setInterval(function () {
+                        var tt = document.getElementsByClassName("tempClass");
+                        for (var i = 0; i < tt.length; i++) {
+                            tt[i].className = ""
+                        }
+                        var ttq = document.getElementsByClassName("colorCss");
+                        for (var i = 0; i < ttq.length; i++) {
+                            ttq[i].style.color = "#006600";
+                            ttq[i].className = "colorCss tempClass";
+                        }
+                        $.ajax({
+                           type:'post',
+                            url:getContextPath()+'/log/timer',
+                            dataType : 'json',
+                            data:{
+                                path:path,
+                                fileSize:fileSize
+                            },
+                            success:function (data) {
+                                fileSize=data.fileSize;
+                                var app="";
+                                for(var i=0;i<data.list.length;i++){
+                                    app=app+"<div class='colorCss'>"+data.list[i]+"</div>";
+                                }
+                                if(app!=""){
+                                    $('#content').append(app);
+                                    if(radio==1){
+                                        goToWhere(1);
+                                    }
+                                }
+                            }
+                        });
+                    },parseInt(time));
+                    $(this).html('点击停止');
+                }
+                else if($(this).html()=='点击停止'){
+                    window.clearInterval(xx);
+                    $(this).html('点击监控');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
