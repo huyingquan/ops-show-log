@@ -26,8 +26,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <form id="form" class="navbar-form navbar-left" role="search">
                 <div class="form-group">
-                    <input type="radio" name="ifroll" class="form-control" checked value="1">开启滚动
-                    <input type="radio" name="ifroll" class="form-control" value="0">关闭滚动|
+                    <input type="radio" name="ifroll" class="form-control" checked value="yes">开启滚动
+                    <input type="radio" name="ifroll" class="form-control" value="no">关闭滚动|
                     刷新周期:<select name="time" class="form-control">
                         <option value="3000">3秒</option>
                         <option value="5000">5秒</option>
@@ -115,7 +115,9 @@
                     }
                     app=app+'<a href="javascript:void(0);" onclick="changPage('+pageSize+')">尾页</a>&nbsp;';
                     $('#page').html(app);
-                    goToWhere(1);
+                    if(!param.pageIndex){
+                        goToWhere(1);
+                    }
                 }
             });
         };
@@ -174,7 +176,7 @@
                                 }
                                 if(app!=""){
                                     $('#content').append(app);
-                                    if(radio==1){
+                                    if(radio=='yes'){
                                         goToWhere(1);
                                     }
                                 }
