@@ -141,8 +141,10 @@ public class LogServlet extends HttpServlet {
             }
             else if(file.isDirectory()){
                 File[] files=file.listFiles();
-                for(File childFile:files){
-                    aroundFile(childFile,list);
+                if(files!=null){
+                    for(File childFile:files){
+                        aroundFile(childFile,list);
+                    }
                 }
             }
         }
