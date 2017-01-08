@@ -3,6 +3,7 @@ package com.ximalaya.ops.show.log;
 import com.alibaba.fastjson.JSON;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -167,28 +168,59 @@ public class LogServlet extends HttpServlet {
 
     protected void returnResourceFile(String fileName, HttpServletResponse response) {
         String filePath = this.getFilePath(fileName);
+        boolean ifByte=true;
         if(filePath.endsWith(".html")) {
             response.setContentType("text/html; charset=utf-8");
+            ifByte=false;
         }
         else if(filePath.endsWith(".css")){
             response.setContentType("text/css;charset=utf-8");
+            ifByte=false;
         }
         else if(fileName.endsWith(".js")) {
             response.setContentType("text/javascript;charset=utf-8");
+            ifByte=false;
+        }
+        else if(fileName.endsWith(".jpg")||fileName.endsWith(".jpeg")){
+            response.setContentType("image/jpeg");
+        }
+        else if(fileName.endsWith(".png")){
+            response.setContentType("image/png");
+        }
+        if(ifByte){
+            byte[] bytes=Utils.readByteArrayFromResource(filePath);
+            ServletOutputStream outputStream=null;
+            try {
+                if(bytes!=null){
+                    outputStream=response.getOutputStream();
+                    outputStream.write(bytes);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if(outputStream!=null){
+                    try {
+                        outputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
         else{
-            return;
-        }
-        String text=Utils.readFromResource(filePath);
-        PrintWriter writer=null;
-        try{
-            writer=response.getWriter();
-            writer.write(text);
-        }catch (IOException e){
-            e.printStackTrace();
-        }finally {
-            if(writer!=null){
-                writer.close();
+            String text=Utils.readFromResource(filePath);
+            PrintWriter writer=null;
+            try{
+                if(text!=null){
+                    writer=response.getWriter();
+                    writer.write(text);
+                }
+            }catch (IOException e){
+                e.printStackTrace();
+            }finally {
+                if(writer!=null){
+                    writer.close();
+                }
             }
         }
     }
