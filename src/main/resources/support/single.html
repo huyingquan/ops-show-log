@@ -148,7 +148,6 @@
                         alert("请跳转至尾页再监控");
                         return;
                     }
-                    var radio=$('#form input[name="ifroll"]:checked').val();
                     var time=$('#form select[name="time"]').val();
                     xx=window.setInterval(function () {
                         var tt = document.getElementsByClassName("tempClass");
@@ -176,6 +175,7 @@
                                 }
                                 if(app!=""){
                                     $('#content').append(app);
+                                    var radio=$('#form input[name="ifroll"]:checked').val();
                                     if(radio=='yes'){
                                         goToWhere(1);
                                     }
