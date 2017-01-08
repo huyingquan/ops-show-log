@@ -136,7 +136,7 @@ public class LogServlet extends HttpServlet {
     private void aroundFile(File file,List<String> list){
         if(file.exists()){
             if(file.isFile()){
-                if(file.getAbsolutePath().endsWith(fileSuffix))
+                //if(file.getAbsolutePath().contains(fileSuffix))
                     list.add(file.getAbsolutePath());
             }
             else if(file.isDirectory()){
