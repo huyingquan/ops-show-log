@@ -5,9 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LOG日志</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        a:link{color: floralwhite;}
+        a:visited{color: floralwhite;}
+        a:hover{color: mintcream;}
+        a:active{color: mintcream;}
+    </style>
 </head>
 <body style="background-image: url('img/body_bg.jpg')">
-<div id="content" style="width: 46%;margin: 20px;display: none;"></div>
+<div id="content" style="width: 46%;margin: 20px;"></div>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -18,7 +24,7 @@
         window.location.href=getContextPath()+'/log/single.html?path='+path;
     };
     $(function () {
-        $('#content').fadeToggle(1500);
+        //$('#content').fadeToggle(1500);
         $.ajax({
             type : 'post',
             url : getContextPath()+'/log/init',
@@ -26,9 +32,9 @@
             dataType : 'json',
             success : function(data) {
                 var contentDiv=$('#content');
-                var app='<ul class="list-group" style="opacity: 0.65;">';
+                var app="<ul style='color:floralwhite;'>";
                 for(var i=0;i<data.length;i++){
-                    app=app+'<a href="javascript:void(0);" onclick="toSingle(this)" class="list-group-item">'+data[i]+'</a>';
+                    app=app+'<li><a href="javascript:void(0);" onclick="toSingle(this)">'+data[i]+'</a></li>';
                 }
                 app=app+"</ul>";
                 contentDiv.append(app);
