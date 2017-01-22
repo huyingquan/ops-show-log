@@ -8,6 +8,7 @@ import java.io.*;
 public class Utils {
     public static String readFromResource(String resource){
         InputStream in = null;
+        BufferedReader reader = null;
         StringBuilder sb=new StringBuilder();
         try{
             in=Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
@@ -17,7 +18,7 @@ public class Utils {
             if(in == null) {
                 return null;
             }
-            BufferedReader reader=new BufferedReader(new InputStreamReader(in));
+            reader=new BufferedReader(new InputStreamReader(in));
             String line="";
             while ((line=reader.readLine())!=null){
                 sb.append(line+"\r\n");
@@ -28,6 +29,13 @@ public class Utils {
             if(in!=null){
                 try {
                     in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(reader!=null){
+                try {
+                    reader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
